@@ -1,19 +1,40 @@
-name: Continuos Integration
+name: .NET Core CI
 
-on: pull_request
-
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 * * * *'
+  
 jobs:
-  continuos-integration:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Using Node.js
-        uses: actions/setup-node@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
         with:
-          node-version: 16.
-      - name: run install, build and test
+          dotnet-version: '6.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+        working-directory: github4women
+
+      - name: Build the project
+        run: dotnet build --no-restore --configuration Release
+        working-directory: github4women
+
+      - name: Run tests
+        run: dotnet test --no-build --verbosity normal
+        working-directory: github4women
+
+      - name: Run custom script
         run: |
-          npm install
-          npm run build 
-          npm run test
+          echo "Running custom script..."
+          dotnet --version
+          echo "Custom script completed."
+        working-directory: github4women
