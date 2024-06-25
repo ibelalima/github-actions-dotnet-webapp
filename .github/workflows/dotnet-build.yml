@@ -1,0 +1,30 @@
+name: Workflow CI
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 * * * *' # Executa a cada hora
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Fazer checkout do repositório
+      uses: actions/checkout@v2
+    
+    - name: Executar um script
+      run: echo "Este é um script personalizado executando após um push ou a cada hora"
+
+    - name: Configurar Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Instalar dependências
+      run: npm install
+
+    - name: Executar testes
+      run: npm test
